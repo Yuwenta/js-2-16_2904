@@ -1,6 +1,7 @@
 <template>
     <div class="goods-list products">
-        <goods v-for="goods in filteredGoods" :key="goods.id_product" :type="'catalog'" :goods="goods"/>
+        <goods v-for="goods in filteredGoods" :key="goods.id_product" :type="'catalog'" :goods="goods" />
+        <goods :type="'temp'" @createnew="addNewCatalogItem" />
     </div>
 </template>
 
@@ -14,7 +15,7 @@
             return {
                 unfilteredGoods: [],
                 filteredGoods: [],
-                url: 'https://raw.githubusercontent.com/daneelzam/Static/master/GB/eShop/API/catalogData.json'
+                url: '/api/catalog'
             }
         },
         mounted() {
@@ -22,6 +23,19 @@
                 this.unfilteredGoods = dataJson;
                 this.filteredGoods = dataJson;
             })
+        },
+        methods: {
+            addNewCatalogItem(goods) {
+                let newProduct = JSON.parse(JSON.stringify(goods));
+                this.$parent.post('/api/catalog/', newProduct)
+                    .then(res => {
+                        if (res.id_product) {
+                            this.filteredGoods.push(Object.assign({}, newProduct, {
+                                id_product: res.id_product
+                            }));
+                        }
+                    });
+            }
         }
     }
 </script>

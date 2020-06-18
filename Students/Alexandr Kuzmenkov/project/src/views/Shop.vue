@@ -11,21 +11,21 @@
                     </button>
                 </form>
                 <button class="btn-cart" @click="showBasket = !showBasket">Cart</button>
-                <Basket ref="basket" v-show="showBasket" />
+                <Basket ref="basket" v-show="showBasket"/>
             </div>
         </header>
         <main>
-            <Catalog />
+            <Catalog @add="addItem"/>
         </main>
     </div>
 </template>
 
 <script>
-    import Basket from "../containers/Basket.vue";
-    import Catalog from "../containers/Catalog.vue";
+    import Basket from '../containers/Basket.vue'
+    import Catalog from '../containers/Catalog.vue'
 
     export default {
-        comments: { Basket, Catalog },
+        components: { Basket, Catalog },
         data() {
             return {
                 showBasket: false
@@ -34,6 +34,35 @@
         methods: {
             get(url) {
                 return fetch(url).then(d => d.json());
+            },
+            post(url, item) {
+                return fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        "Content_Type": "application/json"
+                    },
+                    body: JSON.stringify(item)
+                });
+            },
+            put(url, dir) {
+                return fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        "Content_Type": "application/json"
+                    },
+                    body: JSON.stringify(dir)
+                }).then(d => d.json());
+            },
+            delete(url) {
+                return fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        "Content_Type": "application/json"
+                    }
+                }).then(d => d.json());
+            },
+            addItem(pl) {
+                this.$refs.basket.add(pl)
             }
         }
     }
